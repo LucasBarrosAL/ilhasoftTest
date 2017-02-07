@@ -5,6 +5,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -12,12 +14,14 @@ import android.view.MenuInflater;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.ilha.movies.adapters.MyAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ListActivity extends AppCompatActivity {
@@ -31,6 +35,12 @@ public class ListActivity extends AppCompatActivity {
 
     private ProgressDialog mDialog;
 
+    private RecyclerView mRecyclerView;
+    private MyAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private JSONArray myDataset;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +48,26 @@ public class ListActivity extends AppCompatActivity {
 
         mDialog = new ProgressDialog(this);
         mDialog.setMessage("Loading...");
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+//        // use this setting to improve performance if you know that changes
+//        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        //Verify if mDataset is null
+        if (myDataset == null){
+            myDataset = new JSONArray();
+        }
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapter(myDataset);
+        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     @Override
@@ -85,7 +115,7 @@ public class ListActivity extends AppCompatActivity {
 
         typed = typed.replaceAll(" ", "+");
 
-        String request = BASE_URL + typed + API_KEY;
+        String request = BASE_URL + typed + API_KEY + "&s=all";
 
         Log.e(TAG, request);
 
@@ -123,6 +153,17 @@ public class ListActivity extends AppCompatActivity {
 
     private void showMoviesList(JSONObject response) {
 
+        try {
+            myDataset = response.getJSONObject("data").getJSONObject("results")
+                    .getJSONArray("titles");
+            mAdapter.setParams(myDataset);
+            mAdapter.notifyDataSetChanged();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+            VolleyLog.d(TAG, "Error: title");
+        }
     }
 
     private void hideProgressDialog() {
