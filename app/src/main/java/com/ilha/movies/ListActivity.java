@@ -9,8 +9,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -19,12 +22,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.ilha.movies.adapters.MyAdapter;
+import com.ilha.movies.interfaces.RecyclerOnClickListener;
+import com.ilha.movies.listeners.RecyclerTouchListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements RecyclerOnClickListener{
 
     private static final String TAG = "Movies";
     private SearchView searchView;
@@ -59,6 +64,9 @@ public class ListActivity extends AppCompatActivity {
         if (myDataset == null){
             myDataset = new JSONArray();
         }
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(AppController.getInstance(),
+                mRecyclerView, this));
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -115,7 +123,7 @@ public class ListActivity extends AppCompatActivity {
 
         typed = typed.replaceAll(" ", "+");
 
-        String request = BASE_URL + typed + API_KEY + "&s=all";
+        String request = BASE_URL + typed + API_KEY;
 
         Log.e(TAG, request);
 
@@ -172,5 +180,11 @@ public class ListActivity extends AppCompatActivity {
 
     private void showProgressDialog() {
         mDialog.show();
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        Log.d(AppController.TAG, "Position " + position);
+
     }
 }

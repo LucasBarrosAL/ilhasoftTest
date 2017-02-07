@@ -11,22 +11,27 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.ilha.movies.AppController;
 import com.ilha.movies.R;
+import com.ilha.movies.interfaces.RecyclerOnClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+
+    private static final String ATR_TITLE = "title";
+    private static final String ATR_IMAGE = "thumbnail";
     private JSONArray mDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private NetworkImageView mNetworkImageView;
         private ImageLoader mImageLoader;
         public TextView title;
+        private RecyclerOnClickListener mRecyclerOnClickListener;
 
         public ViewHolder(View v) {
             super(v);
@@ -39,6 +44,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             mImageLoader = AppController.getInstance().getImageLoader();
 
         }
+
+
+        @Override
+        public void onClick(View v) {
+            if (mRecyclerOnClickListener != null){
+                mRecyclerOnClickListener.onClick(v, getAdapterPosition());
+            }
+        }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
@@ -50,7 +63,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
-        // create a new view
+        // create the new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_list, parent, false);
 
@@ -66,30 +79,28 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - replace the contents of the view with that element
         if (mDataset.length() > 0){
             JSONObject item = null;
-
             try {
 
                 item = mDataset.getJSONObject(position);
                 showMovie(holder, item);
 
             } catch (JSONException e) {
-                Log.e(AppController.TAG, "IMPLEMENTAR QUANDO NAO HOUVER NEM MEDICAMENTO NEM OFERTA1");
-                e.printStackTrace();
+                Log.e(AppController.TAG, e.toString());
             }
 
 
         }else {
-            Log.e(AppController.TAG, "IMPLEMENTAR QUANDO NAO HOUVER NEM MEDICAMENTO NEM OFERTA");
+            Log.e(AppController.TAG, "No data in mDaset");
         }
 
     }
 
     private void showMovie(ViewHolder holder, JSONObject item) throws JSONException {
 
-        holder.title.setText(item.getString("title"));
+        holder.title.setText(item.getString(ATR_TITLE));
         // Set the URL of the image that should be loaded into this view, and
         // specify the ImageLoader that will be used to make the request.
-        holder.mNetworkImageView.setImageUrl(item.getString("thumbnail"), holder.mImageLoader);
+        holder.mNetworkImageView.setImageUrl(item.getString(ATR_IMAGE), holder.mImageLoader);
     }
 
     public void setParams(JSONArray dataset) {
