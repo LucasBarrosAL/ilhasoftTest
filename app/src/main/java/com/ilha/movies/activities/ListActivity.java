@@ -1,4 +1,4 @@
-package com.ilha.movies;
+package com.ilha.movies.activities;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -10,10 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -22,7 +20,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.ilha.movies.activities.DetailsActivity;
+import com.ilha.movies.AppController;
+import com.ilha.movies.R;
 import com.ilha.movies.adapters.MyAdapter;
 import com.ilha.movies.interfaces.RecyclerOnClickListener;
 import com.ilha.movies.listeners.RecyclerTouchListener;

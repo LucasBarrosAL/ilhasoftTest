@@ -13,18 +13,17 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".SpleashActivity"
+            android:name=".activities.SpleashActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".ListActivity"
+            android:name=".activities.ListActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -34,7 +33,7 @@
         <activity android:name=".activities.DetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ilha.movies.ListActivity" />
+                android:value=".activities.ListActivity" />
         </activity>
 
     </application>
