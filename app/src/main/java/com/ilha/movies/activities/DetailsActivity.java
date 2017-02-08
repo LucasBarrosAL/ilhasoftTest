@@ -64,79 +64,85 @@ public class DetailsActivity extends AppCompatActivity {
                 Log.e(AppController.TAG, e.toString());
             }
 
-            try{
+            setPoster();
 
-                String urlImage = data.getString("image");
-
-                mNetworkImageView.setImageUrl(urlImage, mImageLoader);
-
-            } catch (JSONException e) {
-                Log.e(AppController.TAG, e.toString());
-            }
-
-
-            try {
-
-                txvDescription.setText(data.getString("description"));
-
-            } catch (JSONException e) {
-                Log.e(AppController.TAG, e.toString());
-            }
-
-            try {
-
-                txvDuration.setText(data.getString("duration"));
-
-            } catch (JSONException e) {
-                Log.e(AppController.TAG, e.toString());
-            }
-
-            try {
-
-                txvReleased.setText(data.getString("released"));
-
-            } catch (JSONException e) {
-                Log.e(AppController.TAG, e.toString());
-            }
-
-            try {
-                JSONArray itens = data.getJSONArray("cast");
-
-                StringBuilder cast = new StringBuilder();
-                for (int i = 0;i < itens.length(); i++){
-                    String aux = itens.get(i).toString();
-                    cast.append(aux);
-                    if (i != itens.length()-1) {
-                        cast.append(SEPARETOR);
-                    }
-                }
-
-                txvCast.setText(cast.toString());
-
-            }catch (JSONException e) {
-                Log.e(AppController.TAG, e.toString());
-            }
-
-            try {
-                JSONArray itens = data.getJSONArray("genres");
-
-                StringBuilder genres = new StringBuilder();
-                for (int i = 0;i < itens.length(); i++){
-                    String aux = itens.get(i).toString();
-                    genres.append(aux);
-                    if (i != itens.length()-1) {
-                        genres.append(SEPARETOR);
-                    }
-                }
-
-                txvGenres.setText(genres.toString());
-
-            }catch (JSONException e) {
-                Log.e(AppController.TAG, e.toString());
-            }
+            setDetails();
 
         }else{
             onBackPressed();
         }
+    }
+
+    private void setDetails() {
+        try {
+
+            txvDescription.setText(data.getString("description"));
+
+        } catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
+
+        try {
+
+            txvDuration.setText(data.getString("duration"));
+
+        } catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
+
+        try {
+
+            txvReleased.setText(data.getString("released"));
+
+        } catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
+
+        try {
+            JSONArray itens = data.getJSONArray("cast");
+
+            String cast = getStringTogetherFromArray(itens);
+
+            txvCast.setText(cast);
+
+        }catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
+
+        try {
+            JSONArray itens = data.getJSONArray("genres");
+
+            String genres = getStringTogetherFromArray(itens);
+
+            txvGenres.setText(genres);
+
+        }catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
+    }
+
+    private void setPoster() {
+        try{
+
+            String urlImage = data.getString("image");
+
+            mNetworkImageView.setImageUrl(urlImage, mImageLoader);
+
+        } catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
+    }
+
+    private String getStringTogetherFromArray(JSONArray itens) throws JSONException {
+
+        StringBuilder strAux = new StringBuilder();
+        for (int i = 0;i < itens.length(); i++){
+            String aux = itens.get(i).toString();
+            strAux.append(aux);
+            if (i != itens.length()-1) {
+                strAux.append(SEPARETOR);
+            }
+        }
+        return strAux.toString();
     }
 }
