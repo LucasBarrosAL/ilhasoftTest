@@ -43,6 +43,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             // Get the ImageLoader through your singleton class.
             mImageLoader = AppController.getInstance().getImageLoader();
 
+            v.setTag(this);
+
         }
 
 

@@ -3,6 +3,7 @@ package com.ilha.movies;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.ilha.movies.activities.DetailsActivity;
 import com.ilha.movies.adapters.MyAdapter;
 import com.ilha.movies.interfaces.RecyclerOnClickListener;
 import com.ilha.movies.listeners.RecyclerTouchListener;
@@ -35,8 +37,9 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
     private SearchView searchView;
     private String usrTyped;
 
-    final private String BASE_URL = "http://imdb.wemakesites.net/api/search?q=";
-    final private String API_KEY = "&api_key=54efdaf7-ebe1-4284-a376-b9b335f8bfd0";
+    final private String BASE_URL = "http://imdb.wemakesites.net/api/";
+    final private String SEARCH_PARAM = "search?q=";
+    final private String API_KEY = "api_key=54efdaf7-ebe1-4284-a376-b9b335f8bfd0";
 
     private ProgressDialog mDialog;
 
@@ -56,8 +59,8 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
-//        // use this setting to improve performance if you know that changes
-//        // in content do not change the layout size of the RecyclerView
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         //Verify if mDataset is null
@@ -119,11 +122,17 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
     }
 
+    /**
+     * Request data from server
+     *
+     * @param typed - What user wanna search
+     * */
     private void getListOfMovies(String typed) {
 
+        // Replace all spaces to plus
         typed = typed.replaceAll(" ", "+");
 
-        String request = BASE_URL + typed + API_KEY;
+        String request = BASE_URL + SEARCH_PARAM + typed + "&" + API_KEY;
 
         Log.e(TAG, request);
 
@@ -159,6 +168,11 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
 
+    /**
+     * Start to build list of movies
+     *
+     * @param response -  Content data of request
+     * */
     private void showMoviesList(JSONObject response) {
 
         try {
@@ -185,6 +199,72 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
     @Override
     public void onClick(View view, int position) {
         Log.d(AppController.TAG, "Position " + position);
+
+        try {
+
+            JSONObject item = myDataset.getJSONObject(position);
+
+            requestDetail(item);
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void requestDetail(JSONObject item) throws JSONException {
+
+        String id = item.getString("id");
+        final String title = item.getString("title");
+
+        Log.d(AppController.TAG, "ID: " + id);
+
+        String request = BASE_URL + id + "?" + API_KEY;
+
+        Log.e(TAG, request);
+
+        showProgressDialog();
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(request, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        //TODO: verificar codigo de sucesso
+                        hideProgressDialog();
+
+                        Log.d(TAG, response.toString());
+
+                        showDetails(response, title);
+
+//                        showMoviesList(response);
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                hideProgressDialog();
+            }
+        });
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+
+    }
+
+    void showDetails(JSONObject data, String title){
+
+        Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
+        intent.putExtra("title", title);
+        intent.putExtra("data", data.toString());
+        startActivity(intent);
 
     }
 }
