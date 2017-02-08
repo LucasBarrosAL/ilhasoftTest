@@ -3,9 +3,12 @@ package com.ilha.movies.activities;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -74,6 +77,10 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(itemDecoration);
+
         // specify an adapter (see also next example)
         mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
@@ -140,11 +147,22 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
             @Override
             public void onResponse(JSONObject response) {
 
-                hideProgressDialog();
+                try {
+                    int code = response.getInt("code");
 
-                Log.d(TAG, response.toString());
+                    hideProgressDialog();
 
-                showMoviesList(response);
+                    if(code == 200){
+                        Log.d(TAG, response.toString());
+
+                        showMoviesList(response);
+                    }else{
+                        showRequestErro(code);
+                    }
+
+                } catch (JSONException e) {
+                    Log.e(AppController.TAG, e.toString());
+                }
 
             }
         }, new Response.ErrorListener() {
@@ -164,6 +182,32 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
 
+    private void showRequestErro(int code) {
+
+        StringBuilder error = new StringBuilder();
+        switch (code){
+            case 1:
+                error.append("Missing IMDb ID");
+                break;
+            case 2:
+                error.append("API Key not Provided");
+                break;
+            case 3:
+                error.append("Invalid API Key");
+                break;
+            default:
+                error.append("Sever Not Found");
+                break;
+        }
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Erro Code: " + code)
+                .setMessage(error.toString())
+                .setNegativeButton("No", null)
+                .show();
+    }
+
     /**
      * Start to build list of movies
      *
@@ -178,9 +222,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
             mAdapter.notifyDataSetChanged();
 
         } catch (JSONException e) {
-            e.printStackTrace();
-
-            VolleyLog.d(TAG, "Error: title");
+            Log.e(AppController.TAG, e.toString());
         }
     }
 
@@ -227,14 +269,20 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        //TODO: verificar codigo de sucesso
-                        hideProgressDialog();
+                        try {
+                            int code = response.getInt("code");
 
-                        Log.d(TAG, response.toString());
+                            hideProgressDialog();
 
-                        showDetails(response, title);
+                            if(code == 200){
+                                showDetails(response, title);
+                            }else{
+                                showRequestErro(code);
+                            }
 
-//                        showMoviesList(response);
+                        } catch (JSONException e) {
+                            Log.e(AppController.TAG, e.toString());
+                        }
 
                     }
                 }, new Response.ErrorListener() {
