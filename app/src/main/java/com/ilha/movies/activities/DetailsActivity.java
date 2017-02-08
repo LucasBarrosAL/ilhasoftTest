@@ -47,6 +47,7 @@ public class DetailsActivity extends AppCompatActivity {
         // ImageLoader
         mImageLoader = AppController.getInstance().getImageLoader();
 
+        // Get datas from others Activity
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
 
@@ -73,6 +74,9 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get ditails from JSONObeject data and show in each textview
+     * */
     private void setDetails() {
         try {
 
@@ -121,6 +125,9 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Load Poster from url
+     * */
     private void setPoster() {
         try{
 
@@ -133,6 +140,11 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get array to put all values together in a String with the SEPARATOR between them.
+     *
+     * @param itens - Array to put all values together
+     * */
     private String getStringTogetherFromArray(JSONArray itens) throws JSONException {
 
         StringBuilder strAux = new StringBuilder();
