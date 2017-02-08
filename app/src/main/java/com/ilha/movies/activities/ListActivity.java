@@ -36,6 +36,12 @@ import org.json.JSONObject;
 public class ListActivity extends AppCompatActivity implements RecyclerOnClickListener{
 
     private static final String TAG = "Movies";
+    private static final String ATR_CODE = "code";
+    private static final String ATR_DATA = "data";
+    private static final String ATR_RESULTS = "results";
+    private static final String ATR_TITLES = "titles";
+    private static final String ATR_TITLE = "title";
+    private static final String ATR_ID = "id";
     private SearchView searchView;
     private String usrTyped;
 
@@ -57,7 +63,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         setContentView(R.layout.activity_list);
 
         mDialog = new ProgressDialog(this);
-        mDialog.setMessage("Loading...");
+        mDialog.setMessage(getResources().getString(R.string.loading));
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -137,8 +143,6 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
         String request = BASE_URL + SEARCH_PARAM + typed + "&" + API_KEY;
 
-        Log.e(TAG, request);
-
         showProgressDialog();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(request, null,
@@ -148,13 +152,11 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
             public void onResponse(JSONObject response) {
 
                 try {
-                    int code = response.getInt("code");
+                    int code = response.getInt(ATR_CODE);
 
                     hideProgressDialog();
 
                     if(code == 200){
-                        Log.d(TAG, response.toString());
-
                         showMoviesList(response);
                     }else{
                         showRequestErro(code);
@@ -169,7 +171,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                VolleyLog.d(TAG, getResources().getString(R.string.error) + error.getMessage());
 
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -187,24 +189,24 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         StringBuilder error = new StringBuilder();
         switch (code){
             case 1:
-                error.append("Missing IMDb ID");
+                error.append(getResources().getString(R.string.error_code_1));
                 break;
             case 2:
-                error.append("API Key not Provided");
+                error.append(getResources().getString(R.string.error_code_2));
                 break;
             case 3:
-                error.append("Invalid API Key");
+                error.append(getResources().getString(R.string.error_code_3));
                 break;
             default:
-                error.append("Sever Not Found");
+                error.append(getResources().getString(R.string.error_code_404));
                 break;
         }
 
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Erro Code: " + code)
+                .setTitle(getResources().getString(R.string.error_code) + code)
                 .setMessage(error.toString())
-                .setNegativeButton("No", null)
+                .setNegativeButton(getResources().getString(R.string.no), null)
                 .show();
     }
 
@@ -216,8 +218,8 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
     private void showMoviesList(JSONObject response) {
 
         try {
-            myDataset = response.getJSONObject("data").getJSONObject("results")
-                    .getJSONArray("titles");
+            myDataset = response.getJSONObject(ATR_DATA).getJSONObject(ATR_RESULTS)
+                    .getJSONArray(ATR_TITLES);
             mAdapter.setParams(myDataset);
             mAdapter.notifyDataSetChanged();
 
@@ -236,8 +238,6 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
     @Override
     public void onClick(View view, int position) {
-        Log.d(AppController.TAG, "Position " + position);
-
         try {
 
             JSONObject item = myDataset.getJSONObject(position);
@@ -252,14 +252,10 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
     private void requestDetail(JSONObject item) throws JSONException {
 
-        String id = item.getString("id");
-        final String title = item.getString("title");
-
-        Log.d(AppController.TAG, "ID: " + id);
+        String id = item.getString(ATR_ID);
+        final String title = item.getString(ATR_TITLE);
 
         String request = BASE_URL + id + "?" + API_KEY;
-
-        Log.e(TAG, request);
 
         showProgressDialog();
 
@@ -270,7 +266,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
                     public void onResponse(JSONObject response) {
 
                         try {
-                            int code = response.getInt("code");
+                            int code = response.getInt(ATR_CODE);
 
                             hideProgressDialog();
 
@@ -289,7 +285,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                VolleyLog.d(TAG, getResources().getString(R.string.error) + error.getMessage());
 
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -308,11 +304,11 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         JSONObject data = null;
 
         try {
-            data = response.getJSONObject("data");
+            data = response.getJSONObject(ATR_DATA);
 
             Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
-            intent.putExtra("title", title);
-            intent.putExtra("data", data.toString());
+            intent.putExtra(ATR_TITLE, title);
+            intent.putExtra(ATR_DATA, data.toString());
             startActivity(intent);
 
         } catch (JSONException e) {

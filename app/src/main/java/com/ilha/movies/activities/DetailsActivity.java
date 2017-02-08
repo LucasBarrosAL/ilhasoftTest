@@ -17,6 +17,15 @@ import org.json.JSONObject;
 public class DetailsActivity extends AppCompatActivity {
 
     private static final String SEPARETOR = ", ";
+    private static final String ATR_TITLE = "title";
+    private static final String ATR_DATA = "data";
+    private static final String ATR_DESCRIPTION = "description";
+    private static final String ATR_DURATION = "duration";
+    private static final String ATR_RELEASED = "released";
+    private static final String ATR_CAST = "cast";
+    private static final String ATR_GENRES = "genres";
+    private static final String ATR_IMAGE = "image";
+
     private String title;
     private JSONObject data;
 
@@ -51,15 +60,14 @@ public class DetailsActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
 
-            title = extras.getString("title");
+            title = extras.getString(ATR_TITLE);
             setTitle(title);
 
-            String strData = extras.getString("data");
+            String strData = extras.getString(ATR_DATA);
 
             try {
 
                 data = new JSONObject(strData);
-                Log.d(AppController.TAG, data.toString());
 
             } catch (JSONException e) {
                 Log.e(AppController.TAG, e.toString());
@@ -80,7 +88,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void setDetails() {
         try {
 
-            txvDescription.setText(data.getString("description"));
+            txvDescription.setText(data.getString(ATR_DESCRIPTION));
 
         } catch (JSONException e) {
             Log.e(AppController.TAG, e.toString());
@@ -88,7 +96,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         try {
 
-            txvDuration.setText(data.getString("duration"));
+            txvDuration.setText(data.getString(ATR_DURATION));
 
         } catch (JSONException e) {
             Log.e(AppController.TAG, e.toString());
@@ -96,16 +104,16 @@ public class DetailsActivity extends AppCompatActivity {
 
         try {
 
-            txvReleased.setText(data.getString("released"));
+            txvReleased.setText(data.getString(ATR_RELEASED));
 
         } catch (JSONException e) {
             Log.e(AppController.TAG, e.toString());
         }
 
         try {
-            JSONArray itens = data.getJSONArray("cast");
+            JSONArray arr = data.getJSONArray(ATR_CAST);
 
-            String cast = getStringTogetherFromArray(itens);
+            String cast = getStringTogetherFromArray(arr);
 
             txvCast.setText(cast);
 
@@ -114,9 +122,9 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         try {
-            JSONArray itens = data.getJSONArray("genres");
+            JSONArray arr = data.getJSONArray(ATR_GENRES);
 
-            String genres = getStringTogetherFromArray(itens);
+            String genres = getStringTogetherFromArray(arr);
 
             txvGenres.setText(genres);
 
@@ -131,7 +139,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void setPoster() {
         try{
 
-            String urlImage = data.getString("image");
+            String urlImage = data.getString(ATR_IMAGE);
 
             mNetworkImageView.setImageUrl(urlImage, mImageLoader);
 
