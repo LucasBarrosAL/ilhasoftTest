@@ -258,12 +258,21 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
     }
 
-    void showDetails(JSONObject data, String title){
+    void showDetails(JSONObject response, String title){
 
-        Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
-        intent.putExtra("title", title);
-        intent.putExtra("data", data.toString());
-        startActivity(intent);
+        JSONObject data = null;
+
+        try {
+            data = response.getJSONObject("data");
+
+            Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
+            intent.putExtra("title", title);
+            intent.putExtra("data", data.toString());
+            startActivity(intent);
+
+        } catch (JSONException e) {
+            Log.e(AppController.TAG, e.toString());
+        }
 
     }
 }
