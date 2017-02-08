@@ -87,7 +87,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         inflater.inflate(R.menu.options_menu, menu);
 
         // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -96,26 +96,23 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
         // Get what users type
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-              @Override
-              public boolean onQueryTextSubmit(String query) {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
 
-                  usrTyped = searchView.getQuery().toString();
+                usrTyped = searchView.getQuery().toString();
 
-                  getListOfMovies(usrTyped);
+                searchView.clearFocus();
 
-                  return false;
-              }
+                getListOfMovies(usrTyped);
 
-              @Override
-              public boolean onQueryTextChange(String newText) {
-                  return false;
-              }
-          });
+                return false;
+            }
 
-            //Force keyboard to appear
-            ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).
-        toggleSoftInput(InputMethodManager.SHOW_FORCED,
-                InputMethodManager.HIDE_IMPLICIT_ONLY);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         return true;
 
