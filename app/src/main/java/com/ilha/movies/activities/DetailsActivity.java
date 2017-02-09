@@ -50,10 +50,10 @@ public class DetailsActivity extends AppCompatActivity {
         txvCast = (TextView) findViewById(R.id.txv_cast);
         txvGenres = (TextView) findViewById(R.id.txv_genres);
 
-        // ImageView
+        // Get the NetworkImageView that will display the image.
         mNetworkImageView = (NetworkImageView) findViewById(R.id.networkImageView);
 
-        // ImageLoader
+        // Get the ImageLoader through your singleton class.
         mImageLoader = AppController.getInstance().getImageLoader();
 
         // Get datas from others Activity

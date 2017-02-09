@@ -184,6 +184,11 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
 
+    /**
+     * Show Alert Dialog with a message according to error code
+     *
+     * @param code - Code of the error
+     * */
     private void showRequestErro(int code) {
 
         StringBuilder error = new StringBuilder();
@@ -202,6 +207,7 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
                 break;
         }
 
+        // Show dialog
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getResources().getString(R.string.error_code) + code)
@@ -250,6 +256,11 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
     }
 
+    /**
+     * Make request for details from object clicked on list
+     *
+     * @param item - Item clicked
+     * */
     private void requestDetail(JSONObject item) throws JSONException {
 
         String id = item.getString(ATR_ID);
@@ -299,6 +310,13 @@ public class ListActivity extends AppCompatActivity implements RecyclerOnClickLi
 
     }
 
+    /**
+     * Prepare the data and call DetailsActivity
+     *
+     * @param response - Resquest for details by ID
+     *
+     * @param title - Movie clicked title
+     * */
     void showDetails(JSONObject response, String title){
 
         JSONObject data = null;

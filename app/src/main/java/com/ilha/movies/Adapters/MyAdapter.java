@@ -97,14 +97,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     }
 
+    /**
+     * Print the titles and images on list
+     * */
     private void showMovie(ViewHolder holder, JSONObject item) throws JSONException {
 
         holder.title.setText(item.getString(ATR_TITLE));
-        // Set the URL of the image that should be loaded into this view, and
-        // specify the ImageLoader that will be used to make the request.
+        // Load image from url
         holder.mNetworkImageView.setImageUrl(item.getString(ATR_IMAGE), holder.mImageLoader);
     }
 
+    /**
+     * Auxiliar to set mDataset from an activity
+     *
+     * @param dataset - Dataset to list
+     * */
     public void setParams(JSONArray dataset) {
         mDataset = dataset;
     }

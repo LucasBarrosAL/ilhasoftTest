@@ -17,6 +17,7 @@ public class SpleashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spleash);
 
+        // Wait 2s and call other activity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

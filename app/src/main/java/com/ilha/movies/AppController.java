@@ -87,6 +87,9 @@ public class AppController extends Application {
         }
     }
 
+    /**
+     * Get ImageLoader from singleton, if its doesnt exist, create one.
+     * */
     public ImageLoader getImageLoader(){
         getRequestQueue();
         if(mImageLoader == null){
