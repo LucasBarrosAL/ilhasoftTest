@@ -1,9 +1,11 @@
-package com.ilha.movies;
+package com.ilha.movies.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
+
+import com.ilha.movies.R;
 
 public class SpleashActivity extends Activity {
 
@@ -15,6 +17,7 @@ public class SpleashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spleash);
 
+        // Wait 2s and call other activity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
